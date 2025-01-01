@@ -1,23 +1,30 @@
 import { ChatOpenAI } from "@langchain/openai";
 import { NextResponse } from "next/server";
-import { StringOutputParser } from "@langchain/core/output_parsers";
+import { agent } from "@/llmengine/graphs/agent";
 export async function POST(req: Request) {
   const { messages } = await req.json();
   const model = new ChatOpenAI({
     modelName: "gpt-4o-mini",
   });
 
-  const chain = model.pipe(new StringOutputParser());
-  const response = await chain.stream(messages);
-
-
+  const response = await agent.invoke({
+    messages: messages,
+  });
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
     async start(controller) {
-      for await (const chunk of response) {
-        const escapedChunk = chunk.replace(/\n/g, '\\n');
-        controller.enqueue(encoder.encode(`0:"${escapedChunk}"\n`));
-      }
+      // for await (const chunk of response) {
+      //   let contentChunk: string = chunk.output;
+      //   console.log(chunk);
+      //   console.log(contentChunk);
+      //   const escapedChunk = contentChunk.replace(/\n/g, '\\n');
+      //   controller.enqueue(encoder.encode(`0:"${escapedChunk}"\n`));
+      // }
+      const messages = response.messages;
+      const lastMessage = messages[messages.length - 1];
+      const content = lastMessage.content.toString();
+      const escapedChunk = content.replace(/\n/g, '\\n');
+      controller.enqueue(encoder.encode(`0:"${escapedChunk}"\n`));
       controller.close();
     },
   });
