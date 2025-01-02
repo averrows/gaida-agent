@@ -15,6 +15,13 @@
       "when": 1735804452124,
       "tag": "0001_glamorous_blue_blade",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1735806532770,
+      "tag": "0002_broad_ultimatum",
+      "breakpoints": true
     }
   ]
 }

@@ -18,3 +18,10 @@ export const targetRecruits = pgTable("target_recruits", {
   recruitmentStatus: varchar().default("TARGETTED"),
   createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 });
+
+export const interviews = pgTable("interviews", {
+  id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({ name: "interviews_id_seq", startWith: 1, increment: 1, minValue: 1 }),
+  targetRecruitId: bigint({ mode: "number" }).references(() => targetRecruits.id),
+  meetingLink: varchar().notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+});

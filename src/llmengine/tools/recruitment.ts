@@ -1,5 +1,5 @@
 import { db } from '@/db';
-import { targetRecruits } from '@/db/schema';
+import { interviews, targetRecruits } from '@/db/schema';
 import { tool } from '@langchain/core/tools';
 import axios from 'axios';
 import { eq, ilike } from 'drizzle-orm';
@@ -105,6 +105,18 @@ const updateTargetRecruitStatus = tool(async (input) => {
   })
 })
 
+const createInterview = tool(async (input) => {
+  const interview = await db.insert(interviews).values(input);
+  return "Interview created for Target Recruit with id " + input.targetRecruitId;
+}, {
+  name: 'create_interview',
+  description: 'Create an interview for a Target Recruit',
+  schema: z.object({
+    targetRecruitId: z.number().describe("ID of the Target Recruit to do the interview with"),
+    meetingLink: z.string().describe("Meeting link of the interview. If the meeting link is not provided, ask the user for it first."),
+  })
+})
+
 export const tools = [
   searchLinkedinLink,
   getFullLinkedinProfileFromUrl,
@@ -112,5 +124,6 @@ export const tools = [
   getTargetRecruitByName,
   getAllTargetRecruits,
   removeTargetRecruit,
-  updateTargetRecruitStatus
+  updateTargetRecruitStatus,
+  createInterview
 ];
