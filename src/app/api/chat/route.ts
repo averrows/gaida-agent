@@ -21,9 +21,11 @@ export async function POST(req: Request) {
       //   controller.enqueue(encoder.encode(`0:"${escapedChunk}"\n`));
       // }
       const messages = response.messages;
+      console.log(messages);
       const lastMessage = messages[messages.length - 1];
       const content = lastMessage.content.toString();
       const escapedChunk = content.replace(/\n/g, '\\n');
+      console.log(escapedChunk);
       controller.enqueue(encoder.encode(`0:"${escapedChunk}"\n`));
       controller.close();
     },

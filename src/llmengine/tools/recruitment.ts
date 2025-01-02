@@ -107,7 +107,7 @@ const updateTargetRecruitStatus = tool(async (input) => {
 
 const createInterview = tool(async (input) => {
   const interview = await db.insert(interviews).values(input);
-  return "Interview created for Target Recruit with id " + input.targetRecruitId;
+  return "Interview created for Target Recruit with id " + input.targetRecruitId + " and meeting link " + input.meetingLink + ". Please update the status of the Target Recruit to INTERVIEWED.";
 }, {
   name: 'create_interview',
   description: 'Create an interview for a Target Recruit',
@@ -115,6 +115,26 @@ const createInterview = tool(async (input) => {
     targetRecruitId: z.number().describe("ID of the Target Recruit to do the interview with"),
     meetingLink: z.string().describe("Meeting link of the interview. If the meeting link is not provided, ask the user for it first."),
   })
+})
+
+const removeInterview = tool(async (input) => {
+  const interview = await db.delete(interviews).where(eq(interviews.id, input.id));
+  return "Interview with id " + input.id + " removed";
+}, {
+  name: 'remove_interview',
+  description: 'Remove an interview from the database',
+  schema: z.object({
+    id: z.number().describe("ID of the Interview to remove"),
+  })
+})
+
+const getAllInterviews = tool(async () => {
+  const dbInterviews = await db.select().from(interviews).innerJoin(targetRecruits, eq(interviews.targetRecruitId, targetRecruits.id));
+  return JSON.stringify(dbInterviews);
+}, {
+  name: 'get_all_interviews',
+  description: 'Get all interviews from the database',
+  schema: z.object({})
 })
 
 export const tools = [
@@ -125,5 +145,7 @@ export const tools = [
   getAllTargetRecruits,
   removeTargetRecruit,
   updateTargetRecruitStatus,
-  createInterview
+  createInterview,
+  removeInterview,
+  getAllInterviews
 ];
