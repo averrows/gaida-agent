@@ -12,8 +12,9 @@ import {
   START
 } from "@langchain/langgraph";
 
-import { tools } from '../tools/linkedin';
+import { tools } from '../tools/recruitment';
 import { ChatOpenAI } from "@langchain/openai";
+import { SystemMessage } from "@langchain/core/messages";
 
 const toolNodeForGraph = new ToolNode(tools)
 
@@ -35,6 +36,10 @@ const shouldContinue = (state: typeof MessagesAnnotation.State) => {
 
 const callModel = async (state: typeof MessagesAnnotation.State) => {
   const { messages } = state;
+  const currentTime = new Date().toISOString();
+  if (messages.length <= 1) {
+    messages.unshift(new SystemMessage(`Current time is: ${currentTime}`));
+  }
   const response = await modelWithTools.invoke(messages);
   return { messages: response };
 }
