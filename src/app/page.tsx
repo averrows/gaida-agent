@@ -1,10 +1,11 @@
 "use client"
 
-import { useChat } from "ai/react"
+import { CreateMessage, Message, useChat } from "ai/react"
 import { useQuery } from "@tanstack/react-query"
 import { Chat } from "@/components/ui/chat"
 import { GetTargetRecruitPayload } from "./api/recruits/target/route"
 import { GetInterviewsPayload } from "./api/recruits/interviews/route"
+import { ChatRequestOptions } from "@ai-sdk/ui-utils"
 
 export default function ChatWithSuggestions() {
   const {
@@ -17,7 +18,7 @@ export default function ChatWithSuggestions() {
     stop,
   } = useChat()
 
-  const { data: recruits, isLoading: recruitsLoading } = useQuery({
+  const { data: recruits, isLoading: recruitsLoading, refetch: refetchRecruits } = useQuery({
     queryKey: ['recruits'],
     queryFn: async () => {
       console.log('fetching recruits')
@@ -25,15 +26,17 @@ export default function ChatWithSuggestions() {
       return recruits;
     },
     refetchInterval: 1000,
+    notifyOnChangeProps: ['data']
   })
 
-  const { data: interviews, isLoading: interviewsLoading } = useQuery({
+  const { data: interviews, isLoading: interviewsLoading, refetch: refetchInterviews } = useQuery({
     queryKey: ['interviews'],
     queryFn: async () => {
       const interviews = await fetch('/api/recruits/interviews').then(res => res.json() as Promise<GetInterviewsPayload[]>);
       return interviews;
     },
     refetchInterval: 1000,
+    notifyOnChangeProps: ['data']
   })
 
   return <div className="h-screen max-h-screen w-screen grid grid-cols-10 justify-center gap-2 items-center p-10">
@@ -43,10 +46,16 @@ export default function ChatWithSuggestions() {
         messages={messages}
         input={input}
         handleInputChange={handleInputChange}
-        handleSubmit={handleSubmit}
+        handleSubmit={(event, options) => {
+          handleSubmit(event, options);
+        }}
         isGenerating={isLoading}
         stop={stop}
-        append={append}
+        append={async (message: Message | CreateMessage, options?: ChatRequestOptions) => {
+          const result = await append(message, options);
+          console.log(result);
+          return result;
+        }}
         suggestions={[
           "Generate a tasty vegan lasagna recipe for 3 people.",
           "Generate a list of 5 questions for a frontend job interview.",

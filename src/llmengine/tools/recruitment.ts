@@ -119,7 +119,7 @@ const createInterview = tool(async (input) => {
 
 const removeInterview = tool(async (input) => {
   const interview = await db.delete(interviews).where(eq(interviews.id, input.id));
-  return "Interview with id " + input.id + " removed";
+  return "Interview with id " + input.id + " removed. Please update the status of the Target Recruit to REJECTED.";
 }, {
   name: 'remove_interview',
   description: 'Remove an interview from the database',

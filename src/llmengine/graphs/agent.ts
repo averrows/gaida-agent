@@ -31,6 +31,8 @@ const shouldContinue = (state: typeof MessagesAnnotation.State) => {
 
 const callModel = async (state: typeof MessagesAnnotation.State) => {
   const { messages } = state;
+  const currentTime = new Date().toISOString();
+  messages.unshift(new SystemMessage(`The current time is ${currentTime}. You are a helpful assistant that can help with recruitment tasks. USE BAHASA INDONESIA.`));
   const response = await modelWithTools.invoke(messages);
   return { messages: response };
 }

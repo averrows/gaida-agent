@@ -24,9 +24,10 @@ export async function POST(req: Request) {
       console.log(messages);
       const lastMessage = messages[messages.length - 1];
       const content = lastMessage.content.toString();
-      const escapedChunk = content.replace(/\n/g, '\\n');
+      const escapedChunk = content.replace(/\n/g, '\\n').replace(/\t/g, '\\t').replace(/\f/g, '\\f').replace(/\v/g, '\\v').replace(/'/g, "\\'").replace(/"/g, '\\"');
       console.log(escapedChunk);
-      controller.enqueue(encoder.encode(`0:"${escapedChunk}"\n`));
+      controller.enqueue(encoder.encode(`0:"${escapedChunk}"`));
+      console.log(encoder.encode(`0:"${escapedChunk}"`));
       controller.close();
     },
   });
