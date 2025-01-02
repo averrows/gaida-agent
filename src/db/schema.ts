@@ -15,5 +15,6 @@ export const targetRecruits = pgTable("target_recruits", {
   id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({ name: "target_recruits_id_seq", startWith: 1, increment: 1, minValue: 1 }),
   linkedinProfileUrl: varchar(),
   name: varchar(),
+  recruitmentStatus: varchar().default("TARGETTED"),
   createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 });

@@ -1,0 +1,1 @@
+ALTER TABLE "target_recruits" ADD COLUMN "recruitmentStatus" varchar DEFAULT 'TARGETTED';

@@ -55,6 +55,7 @@ export default function ChatWithSuggestions() {
               <tr className="border-b">
                 <th className="text-left p-2">Name</th>
                 <th className="text-left p-2">LinkedIn</th>
+                <th className="text-left p-2">Status</th>
               </tr>
             </thead>
             <tbody>
@@ -70,6 +71,9 @@ export default function ChatWithSuggestions() {
                     >
                       Profile
                     </a>
+                  </td>
+                  <td className="p-2">
+                    {recruit.recruitmentStatus}
                   </td>
                 </tr>
               ))}

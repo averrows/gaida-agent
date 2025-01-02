@@ -1,20 +1,15 @@
-import { StringOutputParser, StructuredOutputParser } from "@langchain/core/output_parsers";
-import { PromptTemplate } from "@langchain/core/prompts";
-import { z } from "zod";
 import { ToolNode } from '@langchain/langgraph/prebuilt';
 
-
 import {
-  Annotation,
-  StateGraph,
-  MessagesAnnotation,
   END,
-  START
+  MessagesAnnotation,
+  START,
+  StateGraph
 } from "@langchain/langgraph";
 
-import { tools } from '../tools/recruitment';
-import { ChatOpenAI } from "@langchain/openai";
 import { SystemMessage } from "@langchain/core/messages";
+import { ChatOpenAI } from "@langchain/openai";
+import { tools } from '../tools/recruitment';
 
 const toolNodeForGraph = new ToolNode(tools)
 
@@ -36,17 +31,12 @@ const shouldContinue = (state: typeof MessagesAnnotation.State) => {
 
 const callModel = async (state: typeof MessagesAnnotation.State) => {
   const { messages } = state;
-  const currentTime = new Date().toISOString();
-  if (messages.length <= 1) {
-    messages.unshift(new SystemMessage(`Current time is: ${currentTime}`));
-  }
   const response = await modelWithTools.invoke(messages);
   return { messages: response };
 }
 
 
 const workflow = new StateGraph(MessagesAnnotation)
-  // Define the two nodes we will cycle between
   .addNode("agent", callModel)
   .addNode("tools", toolNodeForGraph)
   .addEdge(START, "agent")
