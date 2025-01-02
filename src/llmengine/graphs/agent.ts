@@ -12,7 +12,7 @@ import {
   START
 } from "@langchain/langgraph";
 
-import { tools } from '../tools/tool';
+import { tools } from '../tools/linkedin';
 import { ChatOpenAI } from "@langchain/openai";
 
 const toolNodeForGraph = new ToolNode(tools)
@@ -26,6 +26,7 @@ const modelWithTools = new ChatOpenAI({
 const shouldContinue = (state: typeof MessagesAnnotation.State) => {
   const { messages } = state;
   const lastMessage = messages[messages.length - 1];
+  console.log(lastMessage);
   if ("tool_calls" in lastMessage && Array.isArray(lastMessage.tool_calls) && lastMessage.tool_calls?.length) {
     return "tools";
   }
