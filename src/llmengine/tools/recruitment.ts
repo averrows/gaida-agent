@@ -7,8 +7,8 @@ import { z } from 'zod';
 
 const axiosConfig = {
   headers: {
-    'x-rapidapi-host': 'linkedin-data-api.p.rapidapi.com',
-    'x-rapidapi-key': '2a67b391bcmsh064cdcc5602eadap1b4ed7jsnb3afcee56f63'
+    'x-rapidapi-host': process.env.LINKEDIN_RAPID_API_HOST,
+    'x-rapidapi-key': process.env.LINKEDIN_RAPID_API_KEY
   }
 };
 
@@ -16,7 +16,6 @@ const axiosConfig = {
 const linkedinApi = axios.create(axiosConfig);
 
 const searchLinkedinLink = tool(async (input) => {
-  console.log("TOOL CALLED")
   const fetchLinkedinSearch = async (keywords: string) => {
     const response = await linkedinApi.get(`https://linkedin-data-api.p.rapidapi.com/search-people?keywords=${keywords}`);
     return response.data;
